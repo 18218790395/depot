@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- 1.配置包扫描注解的支持 这里只需要service和mapper层，controller会在springmvc中配置 -->
+	<context:component-scan
+		base-package="service,mapper"></context:component-scan>
+
+	<!-- 2.配置aop注解支持 -->
+	<aop:aspectj-autoproxy />
+
+	<!-- 加载jdbc.properties -->
+	<context:property-placeholder
+		location="classpath:jdbc.properties" />
+	<!-- 配置数据源   c3p0数据库连接池  -->
+	<!-- 配置c3p0数据源 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!-- 使用set注入初始化属性 -->
+		<property name="driverClass" value="${jdbc.driver}"></property>
+		<property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="initialPoolSize"
+			value="${jdbc.initialPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+		<property name="minPoolSize" value="${jdbc.minPoolSize}"></property>
+	</bean>
+
+	<!-- 配置SqlSessionFactory -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- set注入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- set注入mybatis核心配置文件地址 -->
+		<property name="configLocation"
+			value="classpath:mybatis.cfg.xml"></property>
+	</bean>
+
+	<!-- 配置MapperScannerConfigurer -->
+	<bean id="mapperScannerConfigurer"
+		class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- set注入mapper包 -->
+		<property name="basePackage" value="mapper"></property>
+		<!-- set注入sqlSessionFactoryBeanName 注意是value不是ref -->
+		<property name="sqlSessionFactoryBeanName"
+			value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 配置事务 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- set注入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 开启事务注解驱动 -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+</beans>

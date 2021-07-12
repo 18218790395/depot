@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:名称空间 一般命名规则就是该xml所在的包路径.xml的名称 -->
+<mapper namespace="mapper.UserMapper">
+	<!-- id名与mapper接口方法要一致 -->
+	<select id="login" parameterType="User" resultMap="userMap">
+		select userid,username,password,roleid,deptid from muser
+		where username=#{username} and password =#{password}
+	</select>
+	<resultMap type="User" id="userMap">
+		<id property="userid" column="userid" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+		<association property="role" javaType="role"
+			column="roleid" select="mapper.RoleMapper.selectRoleById"></association>
+		<association property="dept" javaType="dept"
+			column="deptid" select="mapper.DeptMapper.selectDeptById"></association>
+	</resultMap>
+
+	<insert id="register" parameterType="User">
+		insert into muser(userid,username,password)
+		values(seq_muser.nextval,#{username},#{password})
+	</insert>
+
+	<select id="listUsers" parameterType="User" resultMap="userMap">
+		select userid,username,password,roleid,deptid from muser
+		<where>
+			<if test="username != '' and username != null">
+				and username like '%${username}%'
+			</if>
+		</where>
+		order by userid desc
+	</select>
+
+	<select id="checkUsername" parameterType="User"
+		resultType="int">
+		select count(*) as c from muser
+		where username=#{username} 
+	</select>
+
+	<insert id="addUser" parameterType="User">
+		insert into muser(userid,username,password,roleid,deptid)
+		values(seq_muser.nextval,#{username},#{password},#{role.roleid},#{dept.deptid})
+	</insert>
+
+	<select id="deleteUserById" parameterType="User">
+		delete from muser
+		where userid= #{userid}
+	</select>
+
+	<update id="updateUser" parameterType="User">
+		update muser set username=#{username},password=#{password},roleid=#{role.roleid},deptid=#{dept.deptid}
+		where userid =#{userid}
+	</update>
+
+	<select id="getUserById" parameterType="User"
+		resultMap="userMap">
+		select userid,username,password,roleid,deptid from muser
+		where userid= #{userid}
+	</select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 全局参数配置 -->
+	<settings>
+		<!-- 配置日志 -->
+		<setting name="logImpl" value="LOG4J" />
+		<!-- 配置全局延迟加载 -->
+		<!-- 启用懒加载 -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<!-- 属性按需加载 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+
+	<!-- 配置别名（单个配置/批量配置） -->
+	<!-- model包里可能也会存在其他多个实体类，这时候一个一个配置别名就会很麻烦， 这时候就需要批量定义别名，批量指定很简单，只要指定包名即可， 
+		之后程序会为包下的所有类都自动加上别名，其定义别名的规范就是对应包装类的类名首字母变为小写。 这时设置的包名下的类就都有了别名，别名就是类名（首字母小写），像User类，其别名就为user。 -->
+	<!--还有一种方式，就是通过注解的方式来配置别名，方法也很简单， 在需要配置别名的类前通过 @Alias 注解即可，参数就是别名名称。 -->
+	<typeAliases>
+		<package name="entity" />
+	</typeAliases>
+
+	<!-- 配置pagehelper分页插件 -->
+	<plugins>
+		<!-- com.github.pagehelper为PageHelper类所在包名 -->
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+			<!-- 配置方言 -->
+			<property name="helperDialect" value="oracle" />
+			<!-- 查询总条数 -->
+			<property name="PageRowBounds" value="true" />
+			<!-- 将该参数设置为 true 后，offset会当成 pageNum 使用，limit 和 pageSize 含义相同 -->
+			<property name="offsetAsPageNum" value="true" />
+			<!-- 配置后，当 pageSize=0 或者 RowBounds.limit = 0 就会查询出全部的结果 -->
+			<property name="pageSizeZero" value="true" />
+			<!-- 如果 pageNum<=0 会查询第一页，如果 pageNum>总页数 会查询最后一页 -->
+			<property name="reasonable" value="true" />
+		</plugin>
+	</plugins>
+
+	<!-- 配置实体类和表映射关系文件 -->
+	<mappers>
+		<package name="mapper" />
+	</mappers>
+</configuration>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:名称空间 一般命名规则就是该xml所在的包路径.xml的名称 -->
+<mapper namespace="mapper.RoleMapper">
+	<!-- id名与mapper接口方法要一致 -->
+	<select id="selectRoleById" parameterType="int"
+		resultType="Role">
+		select roleid,rolename from role
+		where roleid=#{roleid}
+	</select>
+
+	<select id="listRoles" resultType="Role">
+		select roleid,rolename from role
+	</select>
+</mapper>
