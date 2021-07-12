@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:名称空间 一般命名规则就是该xml所在的包路径.xml的名称 -->
+<mapper namespace="com.ssm.mapper.UserMapper">
+	<!-- 通过用户名和密码核对登录信息 -->
+	<!-- 占位符的值由jsp页面提供，一般是页面标签的name属性 -->
+	<select id="login" parameterType="user" resultType="user">
+		select aid,aname,pwd from auser
+		where aname=#{aname} and pwd=#{pwd}
+	</select>
+	
+	<!-- 通过用户id获得相应的用户来修改其密码 -->
+	<!-- 占位符的值由jsp页面提供，一般是页面标签的name属性 -->
+	<update id="updatePwd" parameterType="user">
+		update auser set pwd=#{pwd}
+		where aid=#{aid}
+	</update>
+
+	<!-- 往数据库表中插入注册信息 -->
+	<!-- 占位符的值由jsp页面提供，一般是页面标签的name属性 -->
+	<insert id="register" parameterType="user">
+		insert into auser(aid,aname,pwd)
+		values(seq_auser.nextval,#{aname},#{pwd})
+	</insert>
+	
+	<!-- 通过用户名检验用户是否重复 -->
+	<!-- 占位符的值由jsp页面提供，一般是页面标签的name属性 -->
+	<select id="checkAname" parameterType="user" resultType="user">
+		select aname from auser
+		where aname=#{aname}
+	</select>
+</mapper>
